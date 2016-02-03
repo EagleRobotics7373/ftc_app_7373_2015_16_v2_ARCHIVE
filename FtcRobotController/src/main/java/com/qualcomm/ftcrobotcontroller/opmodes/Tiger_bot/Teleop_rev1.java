@@ -94,6 +94,7 @@ public class Teleop_rev1 extends OpMode {
     DcMotor turntable; // Motor controller two Hardware map: "turntable" function: Rotates turn turntable
     DcMotor spitch; // Motor controller three Hardware map: "spitch" function: Controls the rotation of the turn turntable
     DcMotor intake; // Motor controller three Hardware map: "intake" function: Controls intake motors
+    DcMotor winch;
 
     //get servos from hardware map
     Servo lefttrigger;
@@ -105,6 +106,7 @@ public class Teleop_rev1 extends OpMode {
     //variables
     double rpower;
     double lpower;
+    double x = 1;
 
     @Override
     public void init() {
@@ -233,6 +235,12 @@ public class Teleop_rev1 extends OpMode {
       //run the scissor and tilt
       runmotor(scissor, -gamepad2.right_stick_y, true);
       runmotor(spitch, -gamepad2.left_stick_y, true);
+
+     //run the winch
+        if(gamepad2.left_bumper){
+            x = -x;
+        }
+      runmotor(winch, x * gamepad2.left_trigger, true);
 
       //turn the turntable
       runmotor(turntable, .5, gamepad2.right_bumper);
