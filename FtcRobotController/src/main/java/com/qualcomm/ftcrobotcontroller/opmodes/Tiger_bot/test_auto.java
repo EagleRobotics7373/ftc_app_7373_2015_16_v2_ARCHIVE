@@ -31,9 +31,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes.Tiger_bot;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -45,48 +45,47 @@ import java.util.Date;
  * <p>
  *Enables control of the robot via the gamepad
  */
-public class Telemetry_OP extends OpMode {
+public class test_auto extends LinearOpMode {
 
-  private String startDate;
-  private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
 
-  DcMotor motor;
-
-  double power;
-
-  @Override
-  public void init() {
-  }
-
-  /*
-     * Code to run when the op mode is first enabled goes here
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
-     */
-  @Override
-  public void init_loop() {
-    startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
-    runtime.reset();
-    telemetry.addData("Null Op Init Loop", runtime.toString());
-    //get from hardware map
-    motor = hardwareMap.dcMotor.get("motor");
-
-  }
-
-  /*
-   * This method will be called repeatedly in a loop
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
-   */
-  @Override
-  public void loop() {
-    //get values and run both motor and servo
-    power = Range.clip(gamepad1.right_stick_y, -1, 1);
-    motor.setPower(power);
+    //add motors
+    DcMotor left;
+    DcMotor right;
 
 
-    //set telemetry
-    telemetry.addData("1 Start", "NullOp started at " + startDate);
-    telemetry.addData("2 Status", "running for " + runtime.toString());
-    telemetry.addData("4 Motor", "Motor Power:" + power);
+    //motor run class
+    public void runmotor(DcMotor motor, double k, Boolean conditionmotor) {
+        if (conditionmotor) {
+            k = Range.clip(k, -1, 1);
+            motor.setPower(k);
+        }
+    }
 
-  }
+    @Override
+    public void runOpMode() throws InterruptedException {
+        runtime.reset();
+        telemetry.addData("Null Op Init Loop", runtime.toString());
+
+        left = hardwareMap.dcMotor.get("leftdrive");
+        right = hardwareMap.dcMotor.get("rightdrive");
+
+        left.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        right.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        left.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        right.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+
+        waitForStart();
+
+        runmotor(left, .5, true);
+        runmotor(right, .5, true);
+        sleep(3000);
+        runmotor(left, -.5, true);
+        runmotor(right, -.5, true);
+        sleep(3000);
+        runmotor(left, 0, true);
+        runmotor(right, 0, true);
+
+
+    }
 }
