@@ -229,22 +229,20 @@ public class Teleop_rev1 extends OpMode {
       set_drive_train();
 
       //drop the intake and run it
-      setservo(dropdown, 1, gamepad1.back);
+      setservo(dropdown, 1, gamepad2.a);
+      setservo(dropdown, 0, gamepad2.y);
       runmotor(intake, gamepad2.right_trigger, true);
+      runmotor(intake, -gamepad2.left_trigger, true);
 
-      //run the scissor and tilt
-      runmotor(scissor, -gamepad2.right_stick_y, true);
-      runmotor(spitch, -gamepad2.left_stick_y, true);
+      //run the scissor
+      runmotor(scissor, gamepad2.left_stick_y, gamepad2.y);
+
+      //pitch and turn scissor
+      runmotor(spitch, -gamepad2.right_stick_y, true);
+      runmotor(turntable, gamepad2.right_stick_x, true);
 
      //run the winch
-        if(gamepad2.left_bumper){
-            x = -x;
-        }
-      runmotor(winch, x * gamepad2.left_trigger, true);
-
-      //turn the turntable
-      runmotor(turntable, .5, gamepad2.right_bumper);
-      runmotor(turntable, -.5, gamepad2.left_bumper);
+      runmotor(winch, -gamepad2.right_stick_y, true);
 
       //run the zipliner triggers
       setservo(lefttrigger, 1, gamepad1.x);
@@ -261,9 +259,6 @@ public class Teleop_rev1 extends OpMode {
       //throw the climbers into the box
       setservo(hammer, 1, gamepad2.dpad_up);
       setservo(hammer, 0, gamepad2.dpad_down);
-
-
-
 
     }
   }

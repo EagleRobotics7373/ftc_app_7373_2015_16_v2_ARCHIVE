@@ -30,7 +30,6 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes.Tiger_bot;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -55,36 +54,58 @@ public class test_auto extends LinearOpMode {
 
 
     //motor run class
-    public void runmotor(DcMotor motor, double k, Boolean conditionmotor) {
+    public void runmotors(DcMotor motor, double k, Boolean conditionmotor) {
         if (conditionmotor) {
             k = Range.clip(k, -1, 1);
             motor.setPower(k);
         }
     }
 
+    public void runtoencoder(DcMotor motor1, int e){
+        while(motor1.getCurrentPosition() <= e){
+
+        }
+    }
+
+    public void resetencoder(){
+        left.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        right.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
         runtime.reset();
         telemetry.addData("Null Op Init Loop", runtime.toString());
-
+        //get motors from the hardware map
         left = hardwareMap.dcMotor.get("leftdrive");
         right = hardwareMap.dcMotor.get("rightdrive");
-
-        left.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-        right.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        //set motor channel mode
         left.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         right.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
 
+
+        //wait for start signal from the coach
         waitForStart();
 
-        runmotor(left, .5, true);
-        runmotor(right, .5, true);
-        sleep(3000);
-        runmotor(left, -.5, true);
-        runmotor(right, -.5, true);
-        sleep(3000);
-        runmotor(left, 0, true);
-        runmotor(right, 0, true);
+        //make initial forward move
+        runmotors(left, 1, true);
+        runmotors(right, -1, true);
+        runtoencoder(left, 3000);
+        waitOneFullHardwareCycle();
+
+        //make turn
+        runmotors(left, -1, true);
+        runmotors(right, -1, true);
+        runtoencoder(left, 3000);
+        waitOneFullHardwareCycle();
+
+        //go up mountain
+        runmotors(left, 1, true);
+        runmotors(right, -1, true);
+        runtoencoder(left, 3000);
+        waitOneFullHardwareCycle();
+
+
 
 
     }

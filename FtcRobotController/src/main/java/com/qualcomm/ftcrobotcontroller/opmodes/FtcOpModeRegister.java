@@ -34,6 +34,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 import com.qualcomm.ftcrobotcontroller.opmodes.Tiger_bot.Telemetry_OP;
 import com.qualcomm.ftcrobotcontroller.opmodes.Tiger_bot.Teleop_no_servo;
 import com.qualcomm.ftcrobotcontroller.opmodes.Tiger_bot.Teleop_rev1;
+import com.qualcomm.ftcrobotcontroller.opmodes.Tiger_bot.test_auto;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
 
@@ -60,8 +61,9 @@ public class FtcOpModeRegister implements OpModeRegister {
 
     manager.register("NullOp", NullOp.class);
     manager.register("Tiger Teleop", Teleop_rev1.class);
-    manager.register("Telemetry", Telemetry_OP.class);
-    manager.register("No Servo", Teleop_no_servo.class);
+    manager.register("Telemetry OP", Telemetry_OP.class);
+    manager.register("No Servo Teleop", Teleop_no_servo.class);
+    manager.register("Auto Test", test_auto.class);
 
 
   }
