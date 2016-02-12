@@ -29,11 +29,12 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package com.qualcomm.ftcrobotcontroller.opmodes.Current_bot;
+package com.qualcomm.ftcrobotcontroller.opmodes.Alpha_bot;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -50,14 +51,21 @@ public class Main_Robot_Auto_Red_NoDelay extends OpMode {
     private String startDate;
     private ElapsedTime runtime = new ElapsedTime();
     //initiate variables
-    DcMotor mright1;
+    //variables are intiated
     DcMotor mleft1;
-    DcMotor mright2;
     DcMotor mleft2;
-    DcMotor arch;
+    DcMotor mright1;
+    DcMotor mright2;
+    DcMotor conveyer;
     DcMotor intake;
-    DcMotor convayer;
-    DcMotor pullup;
+    DcMotor arcreactor;
+    // DcMotor pullup;
+    Servo servor;
+    Servo servol;
+    Servo hammer;
+    Servo lefthand;
+    Servo righthand;
+
     int mode = 1;
 
     @Override
@@ -74,18 +82,32 @@ public class Main_Robot_Auto_Red_NoDelay extends OpMode {
         startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
         runtime.reset();
 
-        //get references from hardware map
-        mleft1 = hardwareMap.dcMotor.get("Motor Right");
-        mleft2 = hardwareMap.dcMotor.get("Motor Left");
-        intake = hardwareMap.dcMotor.get("Intake");
-        mright1 = hardwareMap.dcMotor.get("m1");
-        mright2 = hardwareMap.dcMotor.get("m2");
-        convayer = hardwareMap.dcMotor.get("convayer");
-        arch = hardwareMap.dcMotor.get("arch");
-        pullup = hardwareMap.dcMotor.get("pullup");
+        //get references from hardware map.
+        mleft1 = hardwareMap.dcMotor.get("leftf");
+        arcreactor = hardwareMap.dcMotor.get("arc");
+        mleft2 = hardwareMap.dcMotor.get("leftr");
+        mright1 = hardwareMap.dcMotor.get("rightf");
+        mright2 = hardwareMap.dcMotor.get("rightr");
+        intake = hardwareMap.dcMotor.get("intake");
+        conveyer = hardwareMap.dcMotor.get("conveyer");
+        servor = hardwareMap.servo.get("door_right");
+        servol = hardwareMap.servo.get("door_left");
+        //  pullup = hardwareMap.dcMotor.get("pullup");
+        hammer = hardwareMap.servo.get("hammer");
+        lefthand = hardwareMap.servo.get("left_hand");
+        righthand = hardwareMap.servo.get("right_hand");
+        //set dc motor modes to run with encoders and reset the encoders
+        mleft1.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        mleft2.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        mright1.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        mright2.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        mleft1.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        mleft2.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        mright1.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        mright2.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
 
         //set dc motor modes to run with encoders and reset the encoders
-       /* mleft1.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        mleft1.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
         mleft2.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
         mright1.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
         mright2.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
@@ -93,7 +115,7 @@ public class Main_Robot_Auto_Red_NoDelay extends OpMode {
         mleft2.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         mright1.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         mright2.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-*/
+
     }
 
     /*
@@ -157,11 +179,11 @@ public class Main_Robot_Auto_Red_NoDelay extends OpMode {
         float convayerb = gamepad2.left_trigger;
         if(convayerf > 0)
         {
-            convayer.setPower(1);
+            conveyer.setPower(1);
         }
         if(convayerb > 0)
         {
-            convayer.setPower(-1);
+            conveyer.setPower(-1);
         }
 
 
@@ -169,9 +191,9 @@ public class Main_Robot_Auto_Red_NoDelay extends OpMode {
         float left2 = gamepad2.right_stick_y;
         float right2 = -gamepad2.left_stick_y;
         //Arch reactor
-        arch.setPower(right2/2);
+        arcreactor.setPower(right2/2);
         //PullUp
-        pullup.setPower(left2/2);
+       // pullup.setPower(left2/2);
 
 
 

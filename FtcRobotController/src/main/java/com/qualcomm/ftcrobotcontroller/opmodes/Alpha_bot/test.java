@@ -29,72 +29,63 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package com.qualcomm.ftcrobotcontroller.opmodes.Current_bot;
+package com.qualcomm.ftcrobotcontroller.opmodes.Alpha_bot;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * TeleOp Mode
  * <p>
  *Enables control of the robot via the gamepad
- */
-public class encodertest extends OpMode {
-
-    DcMotor mright;
-    DcMotor mleft;
+*/
 
 
-    @Override
-    public void init() {
-        //get references from hardware map
-        mright = hardwareMap.dcMotor.get("Motor Right");
-        mleft = hardwareMap.dcMotor.get("Motor Left");
-        mleft.setDirection(DcMotor.Direction.REVERSE);
+public class test extends OpMode {
 
-        //reset encoders
-        mright.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-        mleft.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-    }
+DcMotor m1;
+  DcMotor m2;
+  Servo s1;
+  private String startDate;
+  private ElapsedTime runtime = new ElapsedTime();
 
-    /*
-       * Code to run when the op mode is first enabled goes here
-       * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
-       */
-    @Override
-    public void start() {
+  @Override
+  public void init() {
 
-        //set motor run mode
-        mright.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        mleft.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+    m1 = hardwareMap.dcMotor.get("m1");
+    m2 = hardwareMap.dcMotor.get("m2");
+    s1 = hardwareMap.servo.get("s1");
+  }
 
-    }
-
-    /*
-     * This method will be called repeatedly in a loop
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
+  /*
+     * Code to run when the op mode is first enabled goes here
+     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
      */
-    @Override
+  @Override
+  public void init_loop() {
+    startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
+    runtime.reset();
+    telemetry.addData("Null Op Init Loop", runtime.toString());
 
-    public void loop() {
+    m1.setPower(gamepad1.left_stick_y);
+    m2.setPower(gamepad1.left_stick_y);
+    s1.setPosition(gamepad1.left_stick_y);
 
-        if(mright.getCurrentPosition() >= 1120 || mright.getCurrentPosition() <= -1120 ) {
-            mright.setPower(0);
-            mleft.setPower(0);
-        }
-        else {
-            mright.setPower(.78);
-            mleft.setPower(.78);
-        }
+  }
 
-    }
-    public void stop() {
-        mright.setPower(0);
-        mleft.setPower(0);
-    }
+  /*
+   * This method will be called repeatedly in a loop
+   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
+   */
+  @Override
+  public void loop() {
+    telemetry.addData("1 Start", "NullOp started at " + startDate);
+    telemetry.addData("2 Status", "running for " + runtime.toString());
+  }
 }
-
-
-
