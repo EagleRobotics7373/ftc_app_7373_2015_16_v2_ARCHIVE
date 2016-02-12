@@ -267,6 +267,21 @@ public class Main_Robot_Teleop extends OpMode {
                 servol.setPosition(0.50); // open
             }
 
+        //macro for scoring
+        if (gamepad2.dpad_left){ //if dpad left then score to the left
+            servol.setPosition(.5);
+            conveyer.setPower(1);
+        } else if(gamepad2.dpad_right){ //if dpad right then score to the right
+            servor.setPosition(.5);
+            conveyer.setPower(-1);
+        } else if (gamepad2.dpad_down){
+            servor.setPosition(0);
+            servol.setPosition(1);
+            conveyer.setPower(0);
+        } else {
+
+        }
+
 
             //get gamepad 2 joystick values and clip ranges
             right2 = -gamepad2.right_stick_y;
