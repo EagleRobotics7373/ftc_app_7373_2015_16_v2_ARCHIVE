@@ -50,7 +50,7 @@ public class Telemetry_OP extends OpMode {
   private String startDate;
   private ElapsedTime runtime = new ElapsedTime();
 
-  DcMotor motor;
+  Servo servo;
 
   double power;
 
@@ -68,7 +68,7 @@ public class Telemetry_OP extends OpMode {
     runtime.reset();
     telemetry.addData("Null Op Init Loop", runtime.toString());
     //get from hardware map
-    motor = hardwareMap.dcMotor.get("motor");
+    servo = hardwareMap.servo.get("servo");
 
   }
 
@@ -79,14 +79,14 @@ public class Telemetry_OP extends OpMode {
   @Override
   public void loop() {
     //get values and run both motor and servo
-    power = Range.clip(gamepad1.right_stick_y, -1, 1);
-    motor.setPower(power);
+    power = Range.clip(-gamepad1.right_stick_y, 0, 1);
+    servo.setPosition(power);
 
 
     //set telemetry
     telemetry.addData("1 Start", "NullOp started at " + startDate);
     telemetry.addData("2 Status", "running for " + runtime.toString());
-    telemetry.addData("4 Motor", "Motor Power:" + power);
+    telemetry.addData("4 Motor", "Servo Pos:" + power);
 
   }
 }

@@ -50,42 +50,13 @@ import java.util.Date;
 
 public class Teleop_rev1 extends OpMode {
 
-  private String startDate;
-  private ElapsedTime runtime = new ElapsedTime();
-
-  @Override
-  public void init() {
-  }
-
-  /*
-     * Code to run when the op mode is first enabled goes here
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
-     */
-  @Override
-  public void init_loop() {
-    startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
-    runtime.reset();
-    telemetry.addData("Null Op Init Loop", runtime.toString());
-  }
-
-  /*
-   * This method will be called repeatedly in a loop
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
-   */
-  @Override
-  public void loop() {
-    telemetry.addData("1 Start", "NullOp started at " + startDate);
-    telemetry.addData("2 Status", "running for " + runtime.toString());
-  }
-
   /**
    * TeleOp Mode
    * <p>
    *Enables control of the robot via the gamepad
    */
-  public static class Main_Robot_Tele extends OpMode {
-    //private String startDate;
-   // private ElapsedTime runtime = new ElapsedTime();
+    private String startDate;
+    private ElapsedTime runtime = new ElapsedTime();
 
     //get motors from hardware map
     DcMotor rightmotor; // Motor controller one Hardware map: "DR" function: Controls right drive motor
@@ -94,7 +65,6 @@ public class Teleop_rev1 extends OpMode {
     DcMotor turntable; // Motor controller two Hardware map: "turntable" function: Rotates turn turntable
     DcMotor spitch; // Motor controller three Hardware map: "spitch" function: Controls the rotation of the turn turntable
     DcMotor intake; // Motor controller three Hardware map: "intake" function: Controls intake motors
-    DcMotor winch;
 
     //get servos from hardware map
     Servo lefttrigger;
@@ -106,20 +76,16 @@ public class Teleop_rev1 extends OpMode {
     //variables
     double rpower;
     double lpower;
-    double x = 1;
 
-    @Override
-    public void init() {
-    }
 
     /*
        * Code to run when the op mode is first enabled goes here
        * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
        */
     @Override
-    public void init_loop() {
-      //startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
-      //runtime.reset();
+    public void init() {
+      startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
+      runtime.reset();
 
       //get references from hardware map.
       rightmotor = hardwareMap.dcMotor.get("rightmotor");
@@ -142,12 +108,19 @@ public class Teleop_rev1 extends OpMode {
       turntable.setMode(DcMotorController.RunMode.RESET_ENCODERS);
       spitch.setMode(DcMotorController.RunMode.RESET_ENCODERS);
       intake.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+
       // Allow motors to use encoders
-      leftmotor.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-      scissor.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-      turntable.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-      spitch.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-      intake.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+      rightmotor.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+      leftmotor.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+      scissor.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+      turntable.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+      spitch.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+      intake.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+
+      //reset the robot
+      reset();
+
+
     }
 
     /*
@@ -156,19 +129,6 @@ public class Teleop_rev1 extends OpMode {
      */
 
 
-
-    public void set_drive_train()
-    {
-      //aquire data from gamepad
-      rpower = -gamepad1.right_stick_y;
-      lpower = -gamepad1.left_stick_y;
-      // Make sure the data is within -1 through 1
-      rpower = Range.clip(rpower, -1, 1);
-      lpower = Range.clip(lpower, -1, 1);
-      //Set power for drive motors
-      rightmotor.setPower(rpower);
-      rightmotor.setPower(lpower);
-    }
 
     //motor run class
     public void runmotor(DcMotor motor, double k, Boolean conditionmotor){
@@ -187,22 +147,14 @@ public class Teleop_rev1 extends OpMode {
       }
     }
 
-    public void resetencoders () {
-      //reset encoders
-      rightmotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-      leftmotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-      scissor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-      turntable.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-      spitch.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-      intake.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-    }
     //class to reset the whole robot
   public void reset() {
     //reset servo
-    boxflap.setPosition(0);
-    dropdown.setPosition(0);
-    lefttrigger.setPosition(0);
-    righttrigger.setPosition(0);
+    boxflap.setPosition(.95);
+    dropdown.setPosition(.74);
+    setservo(lefttrigger, .43, true);
+    setservo(righttrigger, .56, true);
+    setservo(hammer, 1, true);
 
     //reset motor power
     rightmotor.setPower(0);
@@ -213,53 +165,57 @@ public class Teleop_rev1 extends OpMode {
     intake.setPower(0);
 
     //reset encoders
-    rightmotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-    leftmotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-    scissor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-    turntable.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-    spitch.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-    intake.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+    //rightmotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+    //leftmotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
   }
 
 
 
     @Override
     public void loop() {
-      //run the drive train
-      set_drive_train();
+     telemetry.addData("1 Start", "NullOp started at " + startDate);
+     telemetry.addData("2 Status", "running for " + runtime.toString());
 
+      //run the drive train
+      runmotor(rightmotor, gamepad1.right_stick_y, true);
+      runmotor(leftmotor, -gamepad1.left_stick_y, true);
       //drop the intake and run it
-      setservo(dropdown, 1, gamepad2.a);
-      setservo(dropdown, 0, gamepad2.y);
-      runmotor(intake, gamepad2.right_trigger, true);
-      runmotor(intake, -gamepad2.left_trigger, true);
+      setservo(dropdown, .14, gamepad2.start);
+      setservo(dropdown, .74, gamepad2.back);
+      runmotor(intake, .5*(gamepad2.left_trigger-gamepad2.right_trigger), true);
+
 
       //run the scissor
-      runmotor(scissor, gamepad2.left_stick_y, gamepad2.y);
+      runmotor(scissor, gamepad2.left_stick_y, true);
 
       //pitch and turn scissor
-      runmotor(spitch, -gamepad2.right_stick_y, true);
-      runmotor(turntable, gamepad2.right_stick_x, true);
+      runmotor(spitch, .4*gamepad2.right_stick_y, true);
+      //using if else if else statement to fix infinite turn problem
+      if (gamepad2.right_bumper) {
+          runmotor(turntable, .15, true);
+      } else if(gamepad2.left_bumper){
+          runmotor(turntable, -.15, true);
+      } else {
+          runmotor(turntable, 0, true);
+      }
 
-     //run the winch
-      runmotor(winch, -gamepad2.right_stick_y, true);
 
       //run the zipliner triggers
+      setservo(righttrigger, 0, gamepad1.b);
       setservo(lefttrigger, 1, gamepad1.x);
-      setservo(righttrigger, 1, gamepad1.b);
-      setservo(lefttrigger, 0, gamepad1.y);
-      setservo(righttrigger, 0, gamepad1.y);
+      setservo(righttrigger, .56, gamepad1.y);
+      setservo(lefttrigger, .43, gamepad1.y);
 
       //open and close the box flap
-      setservo(boxflap, 1, gamepad1.dpad_down);
-      setservo(boxflap, .5, gamepad1.dpad_left);
-      setservo(boxflap, .5, gamepad1.dpad_right);
-      setservo(boxflap, 0, gamepad1.dpad_up);
+      setservo(boxflap, .52, gamepad1.dpad_down);
+      setservo(boxflap, .75, gamepad1.dpad_left);
+      setservo(boxflap, .75, gamepad1.dpad_right);
+      setservo(boxflap, .95, gamepad1.dpad_up);
 
       //throw the climbers into the box
-      setservo(hammer, 1, gamepad2.dpad_up);
-      setservo(hammer, 0, gamepad2.dpad_down);
+      setservo(hammer, 0, gamepad2.dpad_up);
+      setservo(hammer, 1, gamepad2.dpad_down);
 
     }
   }
-}
+

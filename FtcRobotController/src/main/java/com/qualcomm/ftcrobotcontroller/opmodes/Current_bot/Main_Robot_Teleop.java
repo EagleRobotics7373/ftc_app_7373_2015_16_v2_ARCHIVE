@@ -1,19 +1,50 @@
+/* Copyright (c) 2014, 2015 Qualcomm Technologies Inc
 
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted (subject to the limitations in the disclaimer below) provided that
+the following conditions are met:
+
+Redistributions of source code must retain the above copyright notice, this list
+of conditions and the following disclaimer.
+
+Redistributions in binary form must reproduce the above copyright notice, this
+list of conditions and the following disclaimer in the documentation and/or
+other materials provided with the distribution.
+
+Neither the name of Qualcomm Technologies Inc nor the names of its contributors
+may be used to endorse or promote products derived from this software without
+specific prior written permission.
+
+NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
+LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes.Current_bot;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * TeleOp Mode
  * <p>
  *Enables control of the robot via the gamepad
  */
-//
 public class Main_Robot_Teleop extends OpMode {
     private String startDate;
     private ElapsedTime runtime = new ElapsedTime();
@@ -23,13 +54,13 @@ public class Main_Robot_Teleop extends OpMode {
     DcMotor mleft2;
     DcMotor mright1;
     DcMotor mright2;
-    DcMotor conveyer;
+    DcMotor convayer;
     DcMotor intake;
     DcMotor arcreactor;
-   // DcMotor pullup;
+    DcMotor pullup;
     Servo servor;
     Servo servol;
-    Servo hammer;
+    Servo Hamer;
     Servo lefthand;
     Servo righthand;
     // for drive ratio on controller 1
@@ -39,8 +70,8 @@ public class Main_Robot_Teleop extends OpMode {
     boolean d_down = gamepad1.dpad_down;
     boolean d_left = gamepad1.dpad_left;
     //for left and right bumpers of controller 2
-    boolean conveyerf;
-    boolean conveyerb;
+    boolean convayerf;
+    boolean convayerb;
     //for left and right triggers on controller 2
     float intakef;
     float intakeb;
@@ -58,15 +89,9 @@ public class Main_Robot_Teleop extends OpMode {
 
     boolean rev = false;
     int k = 1;
-   // boolean first_pass = true;
 
     @Override
     public void init() {
-
-        righthand.setPosition(0.9);
-        lefthand.setPosition(0);
-        servor.setPosition(0.75); // close
-        servol.setPosition(0.50); //close
     }
 
     /*
@@ -75,7 +100,7 @@ public class Main_Robot_Teleop extends OpMode {
        */
     @Override
     public void init_loop() {
-       // startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
+        startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
         runtime.reset();
 
         //get references from hardware map.
@@ -85,15 +110,15 @@ public class Main_Robot_Teleop extends OpMode {
         mright1 = hardwareMap.dcMotor.get("rightf");
         mright2 = hardwareMap.dcMotor.get("rightr");
         intake = hardwareMap.dcMotor.get("intake");
-        conveyer = hardwareMap.dcMotor.get("conveyer");
+        convayer = hardwareMap.dcMotor.get("conveyer");
         servor = hardwareMap.servo.get("door_right");
         servol = hardwareMap.servo.get("door_left");
-       //  pullup = hardwareMap.dcMotor.get("pullup");
-        hammer = hardwareMap.servo.get("hammer");
+        pullup = hardwareMap.dcMotor.get("pullup");
+        Hamer = hardwareMap.servo.get("hammer");
         lefthand = hardwareMap.servo.get("left_hand");
         righthand = hardwareMap.servo.get("right_hand");
         //set dc motor modes to run with encoders and reset the encoders
-       /* mleft1.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        mleft1.setMode(DcMotorController.RunMode.RESET_ENCODERS);
         mleft2.setMode(DcMotorController.RunMode.RESET_ENCODERS);
         mright1.setMode(DcMotorController.RunMode.RESET_ENCODERS);
         mright2.setMode(DcMotorController.RunMode.RESET_ENCODERS);
@@ -101,12 +126,6 @@ public class Main_Robot_Teleop extends OpMode {
         mleft2.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         mright1.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         mright2.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        */
-
-
-
-
-
     }
 
     /*
@@ -115,51 +134,37 @@ public class Main_Robot_Teleop extends OpMode {
      */
     @Override
 
-    public void loop()
-    {
+    public void loop() {
         //reference telemetery
         telemetry.addData("1 Start", "TeleOP started at " + startDate);
         telemetry.addData("2 Status", "running for " + runtime.toString());
-
-      /*  if (first_pass = true)
-        {
-            hammer.setPosition(0);
-            lefthand.setPosition(0.10);
-            righthand.setPosition(0.75);
-
-            first_pass = false;
-
-        }
-*/
         if (gamepad1.y)
         {
-            hammer.setPosition(0.8);
+            Hamer.setPosition(1);
         }
         if (gamepad1.a)
         {
-            hammer.setPosition(0);
+            Hamer.setPosition(-.5);
         }
-
         if(gamepad1.left_bumper)
         {
-            lefthand.setPosition(0); // closed
+            lefthand.setPosition(1);
         }
         if(gamepad1.left_trigger > .1)
         {
-            lefthand.setPosition(0.65); // open
+            lefthand.setPosition(-.5);
         }
 
         if(gamepad1.right_bumper)
         {
-            righthand.setPosition(0.9); // closed
+            lefthand.setPosition(1);
         }
         if(gamepad1.right_trigger > .1)
         {
-            righthand.setPosition(0.10); // open
+            lefthand.setPosition(-.5);
         }
 
         //get gamepad position and set dpad vars accordingly
-        /*
         if (gamepad1.dpad_up) {
             d_up = true;
             d_right = false;
@@ -190,7 +195,7 @@ public class Main_Robot_Teleop extends OpMode {
             mode = 3;
         }
 
-        /*get rev value
+        //get rev value
         if(gamepad1.right_bumper){
             rev = !rev;
         }
@@ -199,7 +204,6 @@ public class Main_Robot_Teleop extends OpMode {
         } else {
             k = 1;
         }
-        */
 
         //get gamepad 1 joystick position and clip values
         left = gamepad1.left_stick_y;
@@ -207,10 +211,10 @@ public class Main_Robot_Teleop extends OpMode {
         right = Range.clip(right, -1, 1);
         left = Range.clip(left, -1, 1);
         //drive system
-        mleft1.setPower(-left);  // front left motor
-        mleft2.setPower(-left);  // rear left motor
-        mright1.setPower(right);  // front right motor
-        mright2.setPower(right);  // rear right motor
+        mleft1.setPower(-left*k);
+        mleft2.setPower(-left*k);
+        mright1.setPower(right*k);
+        mright2.setPower(right*k);
 
 
         //get intake drive values
@@ -226,51 +230,47 @@ public class Main_Robot_Teleop extends OpMode {
 
 
         //conveyer system
-        conveyerf = gamepad2.right_bumper;
-        conveyerb = gamepad2.left_bumper;
-        if (conveyerf) {
-            conveyer.setPower(-1);
-        } else if (conveyerb) {
-            conveyer.setPower(1);
+        convayerf = gamepad2.right_bumper;
+        convayerb = gamepad2.left_bumper;
+        if (convayerf) {
+            convayer.setPower(-1);
+        } else if (convayerb) {
+            convayer.setPower(1);
         } else {
-            conveyer.setPower(0);
+            convayer.setPower(0);
         }
 
         //get servo bridges controller values
-        b = gamepad2.b;
-        x = gamepad2.x;
-        y = gamepad2.y;
-        a = gamepad2.a;
+        b = gamepad1.b;
+        x = gamepad1.x;
+        y = gamepad1.y;
+        a = gamepad1.a;
 
         //check the values and write to control bool
             // take control bool and write to servo
-
-           // right door
             if (b) {
-                servor.setPosition(0.50); // open
+                servor.setPosition(1);
             }
             if (y){
-                servor.setPosition(0.75); // close
+                servor.setPosition(.2);
             }
-
-        // left door
             if (x) {
-                servol.setPosition(0.75); //close
+                servol.setPosition(1);
             }
             if (a){
-                servol.setPosition(0.50); // open
+                servol.setPosition(.4);
             }
 
 
             //get gamepad 2 joystick values and clip ranges
-            right2 = -gamepad2.right_stick_y;
-            left2 = -gamepad2.left_stick_y;
+            left2 = -gamepad2.right_stick_y;
+            right2 = -gamepad2.left_stick_y;
             left2 = Range.clip(left2, -1, 1);
             right2 = Range.clip(right2, -1, 1);
             //Arc reactor write motor power scaled by half
-            arcreactor.setPower(left2);
+            arcreactor.setPower(-right2);
             //PullUp write motor power scaled by half
-           // pullup.setPower(left2);
+            pullup.setPower(left2);
 
         }
     }
